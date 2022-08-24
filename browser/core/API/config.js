@@ -1,7 +1,7 @@
 import path from 'path'
-import { remote } from 'electron'
 import os from 'os'
 import CM from 'lib/config-manager'
+const remote = require('@electron/remote')
 
 const isTest = process.env.NODE_ENV === 'test'
 

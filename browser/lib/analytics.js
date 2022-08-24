@@ -1,5 +1,5 @@
 import ua from 'universal-analytics'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 const Store = require('electron-store')
 const store = new Store({ name: 'SnippetStoreUserInfo' })
 const config = new Store({ name: 'SnippetStoreConf' })

@@ -20,10 +20,15 @@ function createWindow (app) {
     webPreferences: {
       zoomFactor: 1.0,
       nodeIntegration: true,
+      sandbox: false,
+      allowRunningInsecureContent: true,
+      contextIsolation: false,
       blinkFeatures: 'OverlayScrollbars'
     },
     icon: path.resolve(__dirname, '../resources/icon/icon512.png')
   })
+
+  require('@electron/remote/main').enable(mainWindow.webContents)
 
   const url = 'file://' + path.resolve(__dirname, './index.html')
 

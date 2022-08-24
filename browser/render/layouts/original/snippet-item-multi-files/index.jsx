@@ -17,8 +17,8 @@ import TagInput from 'render/components/tag-input'
 import './snippet-item-multi-file'
 import exportSnippetAPI from 'core/API/snippet/export-snippet'
 import getLanguageIcon from 'lib/getLangIcon'
-import { remote } from 'electron'
 import MarkdownPreview from '../../../components/markdown-preview/markdown-preview'
+const remote = require('@electron/remote')
 const { dialog } = remote
 
 export default class SnippetItemMultiFiles extends React.Component {

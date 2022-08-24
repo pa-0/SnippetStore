@@ -1,11 +1,11 @@
 import React from 'react'
 import path from 'path'
-import { remote } from 'electron'
 import i18n from 'render/lib/i18n'
 import ConfigManager from 'lib/config-manager'
 import { pageView, trackEvent } from 'lib/analytics'
 import eventEmitter from '../../../../lib/event-emitter'
 import { migrateSnippet } from 'core/API/snippet'
+const remote = require('@electron/remote')
 
 const defaultStorage = path.join(remote.app.getPath('appData'), 'SnippetStore')
 const { dialog } = remote
@@ -31,19 +31,18 @@ export default class StorageTab extends React.Component {
     }, 2000)
   }
 
-  browseFolderStorage () {
-    dialog.showOpenDialog(
+  async browseFolderStorage () {
+    const { canceled, filePaths } = await dialog.showOpenDialog(
       {
         title: 'Choose new storage path',
         buttonLabel: 'Pick',
         properties: ['openDirectory']
-      },
-      paths => {
-        if (paths && paths[0]) {
-          this.changeStorage(paths[0])
-        }
       }
     )
+
+    if (!canceled && filePaths && filePaths[0]) {
+      this.changeStorage(filePaths[0])
+    }
   }
 
   changeStorage (newPath) {
@@ -65,9 +64,8 @@ export default class StorageTab extends React.Component {
             <label>{i18n.__('Snippet storage path:')}</label>
             <input
               type="text"
-              defaultValue={config.storage}
-              placeholder={defaultStorage}
-              readOnly={true}
+              defaultValue={config.storage || defaultStorage}
+              readOnly
               ref="storage"
             />
             <button

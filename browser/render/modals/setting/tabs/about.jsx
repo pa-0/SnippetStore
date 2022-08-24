@@ -1,11 +1,12 @@
 import React from 'react'
 import logo from 'resources/icon/icon512.png'
-import { shell, remote } from 'electron'
+import { shell } from 'electron'
 import i18n from 'render/lib/i18n'
 import Switch from 'render/components/switch'
 import ConfigManager from 'lib/config-manager'
 import { pageView } from 'lib/analytics'
 import donateButton from 'resources/image/donate.png'
+const remote = require('@electron/remote')
 
 const { app } = remote
 

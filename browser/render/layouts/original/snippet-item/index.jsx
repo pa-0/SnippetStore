@@ -16,8 +16,8 @@ import './snippet-item'
 import { toJS } from 'mobx'
 import exportSnippetAPI from 'core/API/snippet/export-snippet'
 import getLanguageIcon from 'lib/getLangIcon'
-import { remote } from 'electron'
 import MarkdownPreview from '../../../components/markdown-preview/markdown-preview'
+const remote = require('@electron/remote')
 const { dialog } = remote
 
 export default class SnippetItem extends React.Component {

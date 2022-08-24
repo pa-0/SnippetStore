@@ -1,6 +1,6 @@
 const path = require('path')
 const sander = require('sander')
-const { remote } = require('electron')
+const remote = require('@electron/remote')
 const { app } = remote
 
 const themePath =

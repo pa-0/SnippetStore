@@ -18,7 +18,9 @@ if (!gotTheLock) {
     }
   })
 
-  app.on('ready', () => {
+  require('@electron/remote/main').initialize()
+
+  app.whenReady().then(() => {
     mainWindow = require('./app-window')(app)
     require('./app-tray')(app, mainWindow)
     ipcMain.on('bringToFront', () => {
