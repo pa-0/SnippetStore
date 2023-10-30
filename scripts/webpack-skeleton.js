@@ -3,13 +3,14 @@ const path = require('path')
 var config = {
   entry: {
     main: [path.join(__dirname, '../browser/index.jsx')]
+    // searchWorker: [path.join(__dirname, '../browser/workers/search.js')]
   },
-  mode: 'development',
   module: {
+    noParse: /codemirror\/.*\.html$/,
     rules: [
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader'
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.(scss|sass)$/,
@@ -17,21 +18,31 @@ var config = {
       },
       {
         test: /\.(js|jsx)$/,
-        loader: 'babel-loader',
+        use: ['babel-loader'],
         exclude: /node_modules/
       },
       {
         test: /\.(jpg|png|gif)$/,
-        loader: 'file-loader'
+        use: ['file-loader']
       },
       {
         test: /\.(ttf|woff2|eot|woff)$/,
-        loader: 'file-loader'
+        use: ['file-loader']
       },
       {
         test: /\.svg$/,
-        loader: 'svg-inline-loader'
+        use: ['svg-inline-loader']
       }
+      // {
+      //   test: /\.html$/,
+      //   use: [{
+      //     loader: 'html-loader',
+      //     options: {
+      //       // Disables attributes processing
+      //       sources: false
+      //     }
+      //   }]
+      // }
     ]
   },
   resolve: {
@@ -43,7 +54,8 @@ var config = {
       core: path.join(__dirname, '..', 'browser', 'core'),
       store: path.join(__dirname, '..', 'browser', 'store'),
       lib: path.join(__dirname, '..', 'browser', 'lib'),
-      resources: path.join(__dirname, '..', 'resources')
+      resources: path.join(__dirname, '..', 'resources'),
+      workers: path.join(__dirname, '..', 'browser', 'workers')
     }
   }
 }

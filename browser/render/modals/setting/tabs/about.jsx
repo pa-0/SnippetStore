@@ -6,7 +6,7 @@ import Switch from 'render/components/switch'
 import ConfigManager from 'lib/config-manager'
 import { pageView } from 'lib/analytics'
 import donateButton from 'resources/image/donate.png'
-const remote = require('@electron/remote')
+const remote = window.require('@electron/remote')
 
 const { app } = remote
 

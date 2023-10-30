@@ -98,9 +98,8 @@ export default class CreateMultiFilesSnippetModal extends React.Component {
       if (snippetMode === 'null') {
         this.editor.setOption('mode', 'null')
         this.editor.setOption('htmlMode', false)
-        return
       }
-      require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+      window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
     }
   }
 
@@ -234,20 +233,20 @@ export default class CreateMultiFilesSnippetModal extends React.Component {
         this.editor.setOption('mode', 'null')
         this.editor.setOption('htmlMode', false)
       } else if (snippetMode === 'htmlmixed') {
-        require(`codemirror/mode/xml/xml`)
+        window.require(`codemirror/mode/xml/xml`)
         this.editor.setOption('mode', 'xml')
         this.editor.setOption('htmlMode', true)
       } else if (snippetMode === 'sql') {
-        require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+        window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
         this.editor.setOption('mode', 'text/x-sql')
       } else if (snippetMode === 'php') {
-        require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+        window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
         this.editor.setOption('mode', {
           name: 'php',
           startOpen: !langConf.php.requireOpenTag
         })
       } else {
-        require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+        window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
         this.editor.setOption('mode', snippetMode)
       }
     } else {

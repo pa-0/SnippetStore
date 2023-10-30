@@ -1,4 +1,4 @@
-const remote = require('@electron/remote')
+const remote = window.require('@electron/remote')
 const { Menu, MenuItem } = remote
 
 function popup (templates) {

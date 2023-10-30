@@ -28,4 +28,4 @@ function importSnippet (snippetFile) {
   }
 }
 
-module.exports = importSnippet
+export default importSnippet

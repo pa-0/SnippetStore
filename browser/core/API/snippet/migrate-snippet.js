@@ -12,4 +12,4 @@ function migrateSnippet (oldLocation) {
   }
 }
 
-module.exports = migrateSnippet
+export default migrateSnippet

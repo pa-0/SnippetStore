@@ -1,7 +1,7 @@
 import { findIndexObject } from 'lib/util'
 import fetchSnippets from './fetch-snippets'
 import { getSnippetFile } from '../config'
-const sander = require('sander')
+const sander = window.require('sander')
 
 function updateSnippet (snippet) {
   const snippets = fetchSnippets()
@@ -21,4 +21,4 @@ function updateSnippet (snippet) {
   return snippetIndex
 }
 
-module.exports = updateSnippet
+export default updateSnippet

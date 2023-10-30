@@ -2,7 +2,7 @@ import { generateKey } from 'lib/util'
 import fetchSnippets from './fetch-snippets'
 import { getSnippetFile } from '../config'
 import _ from 'lodash'
-const sander = require('sander')
+const sander = window.require('sander')
 
 function createSnippet (snippet) {
   const key = generateKey()
@@ -24,4 +24,4 @@ function createSnippet (snippet) {
   return snippet
 }
 
-module.exports = createSnippet
+export default createSnippet

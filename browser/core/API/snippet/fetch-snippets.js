@@ -1,5 +1,5 @@
 import { getSnippetFile } from '../config'
-const sander = require('sander')
+const sander = window.require('sander')
 
 function fetchSnippets () {
   const SNIPPET_INFO_FILE = getSnippetFile()
@@ -24,4 +24,4 @@ function fetchSnippets () {
   return snippets
 }
 
-module.exports = fetchSnippets
+export default fetchSnippets

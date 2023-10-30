@@ -1,49 +1,66 @@
-process.env.NODE_ENV = 'dev'
+// process.env.NODE_ENV = 'dev'
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const config = require('./webpack.config')
-const signale = require('signale')
+const signal = require('signale')
 const { spawn } = require('child_process')
 const electron = require('electron')
 const port = 8000
 let server = null
 
 const options = {
-  publicPath: config.output.publicPath,
+  allowedHosts: 'all',
+  devMiddleware: {
+    publicPath: config.output.publicPath
+  },
+  static: {
+    directory: config.output.path,
+    publicPath: '/assets'
+  },
   hot: true,
-  inline: true,
-  quiet: true,
-  sockHost: 'localhost',
-  sockPort: port
+  host: 'localhost',
+  port
 }
 
-function startServer () {
-  config.plugins.push(new webpack.HotModuleReplacementPlugin())
-  config.entry.main.unshift('webpack/hot/dev-server')
+async function startServer () {
   const compiler = webpack(config)
-  server = new WebpackDevServer(compiler, options)
 
-  return new Promise((resolve, reject) => {
-    server.listen(port, 'localhost', function (err) {
-      if (err) {
-        reject(err)
+  server = new WebpackDevServer(options, compiler)
+
+  const buildDonePromise = new Promise((resolve, reject) => {
+    compiler.hooks.done.tap('done', stats => {
+      if (!stats.hasErrors()) {
+        signal.success(`Bundle success !`)
+        resolve(stats)
+      } else {
+        reject(stats.compilation.errors[0])
       }
-      signale.success(`Webpack Dev Server listening at localhost:${port}`)
-      signale.watch(`Waiting for webpack to bundle...`)
-      compiler.hooks.done.tap('done', stats => {
-        if (!stats.hasErrors()) {
-          signale.success(`Bundle success !`)
-          resolve()
-        } else {
-          reject(stats.compilation.errors[0])
-        }
-      })
     })
   })
+  // return new Promise((resolve, reject) => {
+  //   compiler.run((err, stats) => {
+  //     console.log('BUILD BUILD BUILD')
+  //     console.log(err)
+  //     if (err) {
+  //       console.log('we got an error !!!')
+  //       console.log(err)
+  //       return reject(err)
+  //     }
+  //     console.log('done done done ')
+  //     console.log(stats.toString())
+  //     resolve(stats)
+  //   })
+  // })
+
+  await server.start()
+
+  signal.success(`Webpack Dev Server listening at localhost:${port}`)
+  signal.watch(`Waiting for webpack to bundle...`)
+  return buildDonePromise
 }
 
 function startElectron () {
-  spawn(electron, ['--hot', './index.js'], {
+  spawn(electron, ['--hot', '--remote-debugging-port=9223', './index.js'], {
     stdio: 'inherit',
     windowsHide: false
   })
@@ -51,7 +68,7 @@ function startElectron () {
       server.close()
     })
     .on('error', err => {
-      signale.error(err)
+      signal.error(err)
       server.close()
     })
     .on('disconnect', () => {
@@ -65,9 +82,9 @@ function startElectron () {
 startServer()
   .then(() => {
     startElectron()
-    signale.success('Electron started')
+    signal.success('Electron started')
   })
   .catch(err => {
-    signale.error(err)
+    signal.error(err)
     process.exit(1)
   })

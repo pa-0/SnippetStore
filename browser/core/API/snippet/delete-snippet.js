@@ -1,7 +1,7 @@
 import { findIndexObject } from 'lib/util'
 import fetchSnippets from './fetch-snippets'
 import { getSnippetFile } from '../config'
-const sander = require('sander')
+const sander = window.require('sander')
 
 function deleteSnippet (snippet) {
   const snippets = fetchSnippets()
@@ -20,4 +20,4 @@ function deleteSnippet (snippet) {
   return snippetIndex
 }
 
-module.exports = deleteSnippet
+export default deleteSnippet

@@ -3,8 +3,6 @@ const layouts = [
   { name: 'list-and-detail', label: 'List and detail' }
 ]
 
-module.exports = {
-  getLayouts () {
-    return layouts
-  }
+export function getLayouts () {
+  return layouts
 }

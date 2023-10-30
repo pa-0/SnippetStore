@@ -4,4 +4,4 @@ function sortByCopyCount (snippets, type) {
   })
 }
 
-module.exports = sortByCopyCount
+export default sortByCopyCount

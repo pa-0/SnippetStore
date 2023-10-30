@@ -10,4 +10,4 @@ function searchByTag (snippets, tag) {
   return snippets
 }
 
-module.exports = searchByTag
+export default searchByTag

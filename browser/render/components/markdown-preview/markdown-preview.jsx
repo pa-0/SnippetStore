@@ -5,7 +5,7 @@ import CM from 'lib/config-manager'
 import './markdown-preview.sass'
 import { shell } from 'electron'
 
-const baseMarkdownCSS = require('!!css-loader!./github-markdown.css') // eslint-disable-line
+const baseMarkdownCSS = import('!!css-loader!./github-markdown.css') // eslint-disable-line
 
 class MarkdownPreview extends React.Component {
   componentDidMount () {
@@ -37,9 +37,9 @@ class MarkdownPreview extends React.Component {
     const config = CM.get()
     let markdownCSSTheme = ''
     if (config.ui.theme === 'dark') {
-      markdownCSSTheme = require('!!css-loader!./dark-markdown.css') // eslint-disable-line
+      markdownCSSTheme = import('!!css-loader!./dark-markdown.css') // eslint-disable-line
     } else if (config.ui.theme === 'light') {
-      markdownCSSTheme = require('!!css-loader!./light-markdown.css') // eslint-disable-line
+      markdownCSSTheme = import('!!css-loader!./light-markdown.css') // eslint-disable-line
     }
     return markdownCSSTheme
   }

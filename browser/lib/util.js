@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import { last } from 'lodash'
 
 export function generateKey () {
   return crypto.randomBytes(20).toString('hex')
@@ -33,9 +34,22 @@ export function getExtension (name) {
   }
 }
 
-export default {
-  generateKey,
-  findObject,
-  findIndexObject,
-  getExtension
+export function getLinesNumber (str) {
+  const split = str.split(/\n|\r\n|\r/g)
+  return split.length
+}
+
+export function getTextAreaLinesNumber (str) {
+  const split = str.split(/\n|\r\n|\r/g)
+  if (split.length === 1) {
+    return 1
+  }
+  if (last(split) !== '') {
+    return split.length
+  }
+  return split.length - 1
+}
+
+export function getPropertyComputedValue (domEl, property) {
+  return window.getComputedStyle(domEl, null).getPropertyValue(property)
 }

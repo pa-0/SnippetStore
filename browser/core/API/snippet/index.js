@@ -1,9 +1,8 @@
-module.exports = {
-  createSnippet: require('./create-snippet'),
-  fetchSnippets: require('./fetch-snippets'),
-  updateSnippet: require('./update-snippet'),
-  deleteSnippet: require('./delete-snippet'),
-  exportSnippet: require('./export-snippet'),
-  importSnippet: require('./import-snippet'),
-  migrateSnippet: require('./migrate-snippet')
-}
+export { default as createSnippet } from './create-snippet'
+export { default as fetchSnippets } from './fetch-snippets'
+export { default as setSnippets } from './set-snippets'
+export { default as updateSnippet } from './update-snippet'
+export { default as deleteSnippet } from './delete-snippet'
+export { default as exportSnippet } from './export-snippet'
+export { default as importSnippet } from './import-snippet'
+export { default as migrateSnippet } from './migrate-snippet'

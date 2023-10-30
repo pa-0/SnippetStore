@@ -7,14 +7,13 @@ const languages = [
   { name: 'Italian', code: 'it' }
 ]
 
-module.exports = {
-  getLanguageCodes () {
-    return languages.reduce(function (codes, lang) {
-      codes.push(lang.code)
-      return codes
-    }, [])
-  },
-  getLanguages () {
-    return languages
-  }
+export function getLanguageCodes () {
+  return languages.reduce(function (codes, lang) {
+    codes.push(lang.code)
+    return codes
+  }, [])
+}
+
+export function getLanguages () {
+  return languages
 }

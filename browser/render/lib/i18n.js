@@ -1,6 +1,6 @@
 import path from 'path'
 import { getLanguageCodes } from './languages'
-const remote = require('@electron/remote')
+const remote = window.require('@electron/remote')
 const { app } = remote
 
 // load package for localization

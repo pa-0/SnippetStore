@@ -7,7 +7,7 @@ import Clipboard from 'core/functions/clipboard'
 import formatDate from 'lib/date-format'
 import TagItem from 'render/components/tag-item'
 import i18n from 'render/lib/i18n'
-import CodeEditor from 'render/components/code-editor'
+// import CodeEditor from 'render/components/code-editor'
 import TagInput from 'render/components/tag-input'
 import eventEmitter from 'lib/event-emitter'
 import CodeMirror from 'codemirror'
@@ -17,10 +17,52 @@ import { toJS } from 'mobx'
 import exportSnippetAPI from 'core/API/snippet/export-snippet'
 import getLanguageIcon from 'lib/getLangIcon'
 import MarkdownPreview from '../../../components/markdown-preview/markdown-preview'
-const remote = require('@electron/remote')
+import { loadSnippetsLanguagesModes } from '../../../../lib/editor'
+const remote = window.require('@electron/remote')
 const { dialog } = remote
 
+function countChar (arr, char) {
+  return arr.reduce((reduceVal, val) => {
+    if (val === char) {
+      return reduceVal + 1
+    }
+    return reduceVal
+  }, 0)
+}
+
+function getLineNumStr (lineNum) {
+  if (lineNum >= 10) {
+    return `${lineNum}`
+  }
+  return ` ${lineNum}`
+}
+
+function addLinesNumbers (snippetContent) {
+  const returnRegex = /\n|\r|\r\n/g
+  let execResult
+  let lineStartIndex = 0
+  let lineNum = 1
+  let output = ''
+
+  while ((execResult = returnRegex.exec(snippetContent))) {
+    output += `${getLineNumStr(lineNum)}  ${snippetContent.slice(lineStartIndex, execResult.index)}${execResult[0]}`
+    lineStartIndex = execResult.index + execResult[0].length
+    lineNum++
+  }
+
+  if (lineStartIndex <= snippetContent.length - 1) {
+    output += `${getLineNumStr(lineNum)}  ${snippetContent.slice(lineStartIndex)}`
+  } else {
+    output += `${getLineNumStr(lineNum)}`
+  }
+
+  return output
+}
+
 export default class SnippetItem extends React.Component {
+  snippetDomElRef = React.createRef()
+  editorContainerRef = React.createRef()
+
   constructor (props) {
     super(props)
     this.state = {
@@ -29,8 +71,70 @@ export default class SnippetItem extends React.Component {
     }
   }
 
+  componentDidMount () {
+    const { snippet, editorRef, fastPreview, virtualRow } = this.props
+    if (!fastPreview && editorRef) {
+      this.editorContainerRef.current.appendChild(editorRef.dom)
+      editorRef.editor.setValue(snippet.value)
+      // this.applyEditorMode()
+      // this.measureParentElementForVirtual(virtualRow)
+    }
+
+    // CodeMirror.on(editorRef.editor, 'change', () => {
+    //   console.log('//////////////////////////////////////////////////////////////// viepor t change')
+    //   alert('123')
+    // })
+  }
+
+  editorEvent () {
+    alert('123')
+  }
+
+  componentDidUpdate () {
+    // console.error('Component did update =================================////////////////////////////////')
+    const { snippet, editorRef, fastPreview, virtualRow } = this.props
+
+    if (!editorRef.alreadyActive) {
+      // console.error('Hola lets set the value')
+      console.log('already not active')
+      this.editorContainerRef.current.replaceChildren(editorRef.dom)
+      // this.applyEditorMode()
+    }
+    console.log('ding dong maon =======')
+    console.log(editorRef.editor.getValue())
+    if (snippet.value !== editorRef.editor.getValue()) {
+      console.log('====value diff============================================')
+      editorRef.editor.setValue(snippet.value)
+    }
+    this.measureParentElementForVirtual(virtualRow)
+
+    return true
+  }
+
   componentWillUnmount () {
     this.unbindEvents()
+  }
+
+  applyEditorMode () {
+    const { snippet, config, editorRef } = this.props
+    const langConf = config.language
+    let snippetMode = CodeMirror.findModeByName(snippet.lang).mode
+
+    // console.error('Snippet mode: ', snippetMode)
+
+    if (snippetMode === 'php') {
+      snippetMode = {
+        name: 'php',
+        startOpen: !langConf.php.requireOpenTag
+      }
+    }
+    editorRef.editor.setOption('mode', snippetMode)
+  }
+
+  measureParentElementForVirtual (virtualRow) {
+    if (virtualRow && this.snippetDomElRef.current) {
+      virtualRow.measureElement(this.snippetDomElRef.current.parentElement)
+    }
   }
 
   handlePreview () {
@@ -42,21 +146,22 @@ export default class SnippetItem extends React.Component {
   }
 
   hasFocus () {
-    const { editor, lang, name, tags, description } = this.refs
+    const { editorRef } = this.props
+    const { lang, name, tags, description } = this.refs
     return (
-      editor.hasFocus() ||
+      editorRef.editor.hasFocus() ||
       lang === document.activeElement ||
       name === document.activeElement ||
-      tags.wrappedInstance.hasFocus() ||
+      tags.hasFocus() ||
       description === document.activeElement
     )
   }
 
   handleSnippetLangChange () {
-    const { editor } = this.refs
+    const { editorRef } = this.props
     const snippetMode = CodeMirror.findModeByName(this.refs.lang.value).mode
-    require(`codemirror/mode/${snippetMode}/${snippetMode}`)
-    editor.setOption('mode', snippetMode)
+    loadSnippetsLanguagesModes([{ lang: this.refs.lang.value }])
+    editorRef.editor.setOption('mode', snippetMode)
   }
 
   copySnippet () {
@@ -69,10 +174,13 @@ export default class SnippetItem extends React.Component {
   }
 
   handleEditButtonClick () {
-    const { editor } = this.refs
+    const { editorRef } = this.props
     this.setState({ isEditing: true, isPreview: false })
-    editor.setOption('readOnly', false)
+    editorRef.editor.setOption('readOnly', false)
     this.bindEvents()
+    if (this.props.onEditClick) {
+      this.props.onEditClick()
+    }
   }
 
   bindEvents () {
@@ -102,12 +210,13 @@ export default class SnippetItem extends React.Component {
   }
 
   handleSaveChangesClick () {
-    const { editor, lang, name, tags, description } = this.refs
+    const { editorRef } = this.props
+    const { lang, name, tags, description } = this.refs
     const { snippet } = this.props
-    const newSnippetValue = editor.getValue()
+    const newSnippetValue = editorRef.editor.getValue()
     const newSnippetLang = lang.value
     const newSnippetName = name.value
-    const newSnippetTags = tags.wrappedInstance.getTags()
+    const newSnippetTags = tags.getTags()
     const newSnippetDescription = description.value
     const valueChanged = snippet.value !== newSnippetValue
     const langChanged = snippet.lang !== newSnippetLang
@@ -129,14 +238,14 @@ export default class SnippetItem extends React.Component {
       newSnippet.description = newSnippetDescription
       if (langChanged) {
         const snippetMode = CodeMirror.findModeByName(newSnippet.lang).mode
-        require(`codemirror/mode/${snippetMode}/${snippetMode}`)
-        editor.setOption('mode', snippetMode)
+        loadSnippetsLanguagesModes([newSnippet])
+        editorRef.editor.setOption('mode', snippetMode)
       }
       this.props.store.updateSnippet(newSnippet)
     }
 
     this.setState({ isEditing: false })
-    editor.setOption('readOnly', true)
+    editorRef.editor.setOption('readOnly', true)
     this.unbindEvents()
   }
 
@@ -176,6 +285,7 @@ export default class SnippetItem extends React.Component {
     const languageIcon = getLanguageIcon(snippet.lang)
     const isMarkdown =
       snippet.lang === 'Markdown' || snippet.lang === 'GitHub Flavored Markdown'
+
     return (
       <div className="header">
         <div className="info">
@@ -282,9 +392,9 @@ export default class SnippetItem extends React.Component {
   }
 
   handleDiscardChangesClick () {
-    const { editor } = this.refs
+    const { editorRef } = this.props
     this.setState({ isEditing: false }, () => {
-      editor.setOption('readOnly', true)
+      editorRef.editor.setOption('readOnly', true)
     })
     this.unbindEvents()
   }
@@ -360,13 +470,43 @@ export default class SnippetItem extends React.Component {
     )
   }
 
+  renderEditor () {
+    const { snippet, fastPreview, fastPreviewStyle, config } = this.props
+
+    const {
+      showLineNumber
+    } = config.editor
+
+    if (fastPreview) {
+      return <pre className='fastPreview' style={{
+        fontFamily: 'monospace',
+        fontSize: '13px',
+        fontVariantLigatures: 'contextual',
+        padding: '4px',
+        paddingBottom: '8px',
+        lineHeight: '19.5px',
+        minHeight: '32px',
+        margin: 0,
+        ...fastPreviewStyle
+      }}>
+        {showLineNumber ? addLinesNumbers(snippet.value) : snippet.value}
+      </pre>
+    }
+
+    return <div ref={this.editorContainerRef}></div>
+  }
+
   render () {
     const { isPreview } = this.state
-    const { config, snippet } = this.props
+    const { config, snippet, fastPreview, fastPreviewStyle } = this.props
     const isMarkdown =
       snippet.lang === 'Markdown' || snippet.lang === 'GitHub Flavored Markdown'
+
+    console.log('config.editor.theme =================================================================')
+    console.log(config.editor.theme)
+
     return (
-      <div className="snippet-item original">
+      <div ref={this.snippetDomElRef} className="snippet-item original">
         <ReactTooltip place="bottom" effect="solid" />
         {this.renderHeader()}
         {this.renderTagList()}
@@ -375,15 +515,7 @@ export default class SnippetItem extends React.Component {
           <div style={{ height: '300px' }}>
             <MarkdownPreview markdown={snippet.value} />
           </div>
-        ) : (
-          <CodeEditor
-            config={config}
-            type="single"
-            snippet={snippet}
-            ref="editor"
-            maxHeight="300px"
-          />
-        )}
+        ) : this.renderEditor()}
         {this.renderFooter()}
       </div>
     )

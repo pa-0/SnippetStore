@@ -6,4 +6,4 @@ function sortByCreateTime (snippets, type) {
   })
 }
 
-module.exports = sortByCreateTime
+export default sortByCreateTime

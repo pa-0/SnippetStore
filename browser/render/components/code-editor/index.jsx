@@ -15,26 +15,37 @@ export default class CodeEditor extends React.Component {
   }
 
   initSingleFileSnippetEditor () {
-    const { config, snippet } = this.props
+    const { config, snippet, active } = this.props
     if (snippet) {
       const { theme, showLineNumber, highlightCurrentLine } = config.editor
-      const snippetMode = CodeMirror.findModeByName(snippet.lang).mode
-      if (snippetMode && snippetMode !== 'null') {
-        require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+
+      let highlightAndThemeConfig
+
+      if (active) {
+        const snippetMode = CodeMirror.findModeByName(snippet.lang).mode
+        if (snippetMode && snippetMode !== 'null') {
+          window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+        }
+
+        highlightAndThemeConfig = {
+          mode: snippetMode,
+          theme: theme
+        }
       }
+
       const gutters = showLineNumber
         ? ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
         : []
+
       this.editor = CodeMirror(this.refs.editor, {
         lineNumbers: showLineNumber,
         value: snippet.value,
         foldGutter: showLineNumber,
-        mode: snippetMode,
-        theme: theme,
         gutters: gutters,
         readOnly: true,
         autoCloseBrackets: true,
-        autoRefresh: true
+        autoRefresh: true,
+        ...highlightAndThemeConfig
       })
       if (highlightCurrentLine) {
         this.editor.setOption('styleActiveLine', { nonEmpty: false })
@@ -68,7 +79,7 @@ export default class CodeEditor extends React.Component {
     if (resultMode) {
       snippetMode = resultMode.mode
       if (snippetMode && snippetMode !== 'null') {
-        require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+        window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
       }
     }
 
@@ -123,24 +134,27 @@ export default class CodeEditor extends React.Component {
   }
 
   onUpdateSingleFileSnippet (props) {
-    const { snippet, config } = props
+    const { snippet, config, active } = props
     const langConf = config.language
-    let snippetMode = CodeMirror.findModeByName(snippet.lang).mode
-    if (snippetMode && snippetMode !== 'null') {
-      require(`codemirror/mode/${snippetMode}/${snippetMode}`)
-    }
-    this.editor.setValue(snippet.value)
-    if (snippetMode === 'php') {
-      snippetMode = {
-        name: 'php',
-        startOpen: !langConf.php.requireOpenTag
+    let snippetMode = 'null'
+    if (active) {
+      snippetMode = CodeMirror.findModeByName(snippet.lang).mode
+      if (snippetMode && snippetMode !== 'null') {
+        window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
       }
+      if (snippetMode === 'php') {
+        snippetMode = {
+          name: 'php',
+          startOpen: !langConf.php.requireOpenTag
+        }
+      }
+      this.editor.setOption('mode', snippetMode)
+      this.editor.setValue(snippet.value)
     }
-    this.editor.setOption('mode', snippetMode)
   }
 
   onUpdateMultiFileSnippet () {
-    const { snippet, selectedFile, isEditing } = this.props
+    const { snippet, selectedFile, isEditing, active } = this.props
     const { config } = this.props
     const langConf = config.language
 
@@ -148,18 +162,20 @@ export default class CodeEditor extends React.Component {
       const file = snippet.files[selectedFile]
       if (file) {
         const fileExtension = getExtension(file.name)
-        const resultMode = CodeMirror.findModeByExtension(fileExtension)
         let snippetMode = 'null'
-        if (resultMode) {
-          snippetMode = resultMode.mode
-          if (snippetMode && snippetMode !== 'null') {
-            require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+        if (active) {
+          const resultMode = CodeMirror.findModeByExtension(fileExtension)
+          if (resultMode) {
+            snippetMode = resultMode.mode
+            if (snippetMode && snippetMode !== 'null') {
+              window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+            }
           }
-        }
-        if (snippetMode === 'php') {
-          snippetMode = {
-            name: 'php',
-            startOpen: !langConf.php.requireOpenTag
+          if (snippetMode === 'php') {
+            snippetMode = {
+              name: 'php',
+              startOpen: !langConf.php.requireOpenTag
+            }
           }
         }
         this.editor.setOption('mode', snippetMode)
@@ -183,7 +199,7 @@ export default class CodeEditor extends React.Component {
     if (props) {
       const snippetMode = CodeMirror.findModeByName(snippet.lang).mode
       if (snippetMode && snippetMode !== 'null') {
-        require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+        window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
       }
     }
     const gutters = showLineNumber
@@ -241,7 +257,7 @@ export default class CodeEditor extends React.Component {
       if (resultMode) {
         snippetMode = resultMode.mode
         if (snippetMode && snippetMode !== 'null') {
-          require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+          window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
         }
       }
     }

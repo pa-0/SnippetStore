@@ -14,8 +14,8 @@ import MainAreaListAndDetail from './layouts/list-and-detail/main-area'
 
 import { trackEvent, pageView } from 'lib/analytics'
 
-const messenger = require('messenger')
-const electron = require('electron')
+const messenger = window.require('messenger')
+const electron = window.require('electron')
 const { ipcRenderer } = electron
 
 const server = messenger.createListener(2041)
@@ -31,7 +31,7 @@ export default class Main extends React.Component {
 
   componentDidMount () {
     const { config } = this.state
-    require(`codemirror/theme/${config.editor.theme}.css`)
+    import(`codemirror/theme/${config.editor.theme}.css`)
     document.body.setAttribute('data-theme', config.ui.theme)
     i18n.setLocale(config.ui.language)
     init()
@@ -106,7 +106,7 @@ export default class Main extends React.Component {
       <div className="wrapper" ref="wrapper">
         <ToastContainer />
         <ModalList config={config} />
-        <SideBar config={config} />
+        {/* <SideBar config={config} /> */}
         {this.renderMainArea()}
       </div>
     )

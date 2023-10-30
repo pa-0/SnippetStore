@@ -6,4 +6,4 @@ function sortByUpdateTime (snippets, type) {
   })
 }
 
-module.exports = sortByUpdateTime
+export default sortByUpdateTime

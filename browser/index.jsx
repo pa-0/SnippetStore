@@ -9,6 +9,7 @@ import './render/lib/styles/utility'
 import './render/lib/icons'
 import './render/lib/styles/theme'
 
+import CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/scroll/simplescrollbars'
 import 'codemirror/addon/scroll/simplescrollbars.css'
@@ -26,7 +27,6 @@ import 'codemirror/addon/search/jump-to-line'
 import 'codemirror/addon/dialog/dialog'
 import 'codemirror/addon/dialog/dialog.css'
 import 'codemirror/addon/selection/active-line'
-import CodeMirror from 'codemirror'
 
 import 'react-toastify/dist/ReactToastify.css'
 

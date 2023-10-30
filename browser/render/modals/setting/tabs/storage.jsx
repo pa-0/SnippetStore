@@ -5,7 +5,7 @@ import ConfigManager from 'lib/config-manager'
 import { pageView, trackEvent } from 'lib/analytics'
 import eventEmitter from '../../../../lib/event-emitter'
 import { migrateSnippet } from 'core/API/snippet'
-const remote = require('@electron/remote')
+const remote = window.require('@electron/remote')
 
 const defaultStorage = path.join(remote.app.getPath('appData'), 'SnippetStore')
 const { dialog } = remote

@@ -1,5 +1,5 @@
-const { ipcRenderer } = require('electron')
-const remote = require('@electron/remote')
+const { ipcRenderer } = window.require('electron')
+const remote = window.require('@electron/remote')
 
 function on (name, listener) {
   ipcRenderer.on(name, listener)

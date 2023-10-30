@@ -18,7 +18,7 @@ import './snippet-item-multi-file'
 import exportSnippetAPI from 'core/API/snippet/export-snippet'
 import getLanguageIcon from 'lib/getLangIcon'
 import MarkdownPreview from '../../../components/markdown-preview/markdown-preview'
-const remote = require('@electron/remote')
+const remote = window.require('@electron/remote')
 const { dialog } = remote
 
 export default class SnippetItemMultiFiles extends React.Component {
@@ -421,11 +421,11 @@ export default class SnippetItemMultiFiles extends React.Component {
           editor.setOption('mode', 'null')
           editor.setOption('htmlMode', false)
         } else if (snippetMode === 'htmlmixed') {
-          require(`codemirror/mode/xml/xml`)
+          window.require(`codemirror/mode/xml/xml`)
           editor.setOption('mode', 'xml')
           editor.setOption('htmlMode', true)
         } else {
-          require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+          window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
           editor.setOption('mode', snippetMode)
         }
       } else {
@@ -519,11 +519,11 @@ export default class SnippetItemMultiFiles extends React.Component {
             editor.setOption('mode', 'null')
             editor.setOption('htmlMode', false)
           } else if (snippetMode === 'htmlmixed') {
-            require(`codemirror/mode/xml/xml`)
+            window.require(`codemirror/mode/xml/xml`)
             editor.setOption('mode', 'xml')
             editor.setOption('htmlMode', true)
           } else {
-            require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+            window.require(`codemirror/mode/${snippetMode}/${snippetMode}`)
             editor.setOption('mode', snippetMode)
           }
         } else {

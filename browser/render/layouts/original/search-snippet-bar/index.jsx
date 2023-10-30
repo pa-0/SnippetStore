@@ -1,8 +1,19 @@
 import React from 'react'
+import { debounce } from 'lodash'
 import i18n from 'render/lib/i18n'
 import FAIcon from '@fortawesome/react-fontawesome'
 import eventEmitter from 'lib/event-emitter'
 import './search-snippet-bar'
+
+function ourDebounce (callback, duration) {
+  let timeoutHandler
+  return function (...args) {
+    if (timeoutHandler) clearTimeout(timeoutHandler)
+    timeoutHandler = setTimeout(() => {
+      callback.call(this, ...args)
+    }, duration)
+  }
+}
 
 export default class SearchSnippetBar extends React.Component {
   constructor (props) {
@@ -21,6 +32,8 @@ export default class SearchSnippetBar extends React.Component {
       }
       this.handleSearch(newKeyword)
     }
+
+    this.debouncedHandleSearch = ourDebounce(this.handleSearch, 150)
   }
 
   componentDidMount () {
@@ -61,7 +74,7 @@ export default class SearchSnippetBar extends React.Component {
           type="text"
           ref="search"
           placeholder="Search..."
-          onChange={e => this.handleSearch(e.target.value)}
+          onChange={(e) => { this.debouncedHandleSearch(e.target.value) }}
         />
         <div className="search-icon">
           <FAIcon icon="search" />

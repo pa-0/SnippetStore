@@ -86,4 +86,4 @@ export function getAction (name) {
   }
 }
 
-module.exports = applyShortcut
+export default applyShortcut

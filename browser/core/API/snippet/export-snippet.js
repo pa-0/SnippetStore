@@ -6,4 +6,4 @@ function exportSnippet (snippet, folder) {
   fs.writeFileSync(fullPath, JSON.stringify(snippet), { encoding: 'utf-8' })
 }
 
-module.exports = exportSnippet
+export default exportSnippet

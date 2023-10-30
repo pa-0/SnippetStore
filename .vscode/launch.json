@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {     
+      "name": "Electron: Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9223,
+      // "webRoot": "${workspaceFolder}/browser"
+    },
+    {     
+      "name": "Fahima node process",
+      "type": "node",
+      "request": "attach",
+      "port": 8080,
+      // "webRoot": "${workspaceFolder}/browser"
+    }
+  ]
+}

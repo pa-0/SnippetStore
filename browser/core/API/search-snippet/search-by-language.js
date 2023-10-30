@@ -3,7 +3,7 @@ import { getExtension } from 'lib/util'
 import CodeMirror from 'codemirror'
 import 'codemirror/mode/meta'
 
-function searchByLanguage (snippets, language) {
+export default function searchByLanguage (snippets, language) {
   if (language) {
     language = language.replace(/_/g, ' ')
     const languageRegex = new RegExp(_.escapeRegExp(language), 'i')
@@ -29,5 +29,3 @@ function searchByLanguage (snippets, language) {
   }
   return snippets
 }
-
-module.exports = searchByLanguage

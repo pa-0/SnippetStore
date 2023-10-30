@@ -17,7 +17,8 @@ import { toJS } from 'mobx'
 import exportSnippetAPI from 'core/API/snippet/export-snippet'
 import getLanguageIcon from 'lib/getLangIcon'
 import MarkdownPreview from 'render/components/markdown-preview/markdown-preview'
-const remote = require('@electron/remote')
+import { loadSnippetsLanguagesModes } from '../../../../lib/editor'
+const remote = window.require('@electron/remote')
 const { dialog } = remote
 
 export default class SnippetDetail extends React.Component {
@@ -239,7 +240,7 @@ export default class SnippetDetail extends React.Component {
       newSnippet.description = description.value
       if (langChanged) {
         const snippetMode = CodeMirror.findModeByName(newSnippet.lang).mode
-        require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+        loadSnippetsLanguagesModes([newSnippet])
         editor.setOption('mode', snippetMode)
       }
       store.updateSnippet(newSnippet)
@@ -338,7 +339,7 @@ export default class SnippetDetail extends React.Component {
   handleSnippetLangChange () {
     const { editor } = this.refs
     const snippetMode = CodeMirror.findModeByName(this.refs.lang.value).mode
-    require(`codemirror/mode/${snippetMode}/${snippetMode}`)
+    loadSnippetsLanguagesModes([{ lang: this.refs.lang.value }])
     editor.setOption('mode', snippetMode)
   }
 

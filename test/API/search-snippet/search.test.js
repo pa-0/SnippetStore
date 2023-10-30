@@ -1,4 +1,4 @@
-import searchSnippet from 'core/API/search-snippet'
+import { searchSnippet } from 'core/API/search-snippet'
 
 const sampleSnippets = [
   { name: 'javascript snippet', lang: 'JavaScript' },

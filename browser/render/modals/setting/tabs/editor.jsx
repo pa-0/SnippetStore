@@ -58,7 +58,7 @@ if (number == 1) {
 
   previewEditorThemeChange () {
     const newTheme = this.refs.themeSelector.value
-    require(`codemirror/theme/${newTheme}.css`)
+    import(`codemirror/theme/${newTheme}.css`)
     this.editor.setOption('theme', newTheme)
   }
 
