@@ -140,7 +140,7 @@
     "svg-inline-loader": "^0.8.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^2.0.15",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^5.0.4"
   },
   "keywords": [
     "react",
